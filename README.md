@@ -31,7 +31,7 @@ Produces this assembly dependency diagram:
 Whereas if you want to see the public types organized by namespace do this:
 
 ```
-CodeGraph.exe -n -t -p -i  CodeGraph.exe test.dgml
+CodeGraph.exe -n -t -i  CodeGraph.exe test.dgml
 ```
 
 ![codegraph](images/types.png)
