@@ -24,7 +24,15 @@ For example, this command line:
 CodeGraph -a -i CodeGraph.exe test.dgml
 ```
 
-Produces this diagram:
+Produces this assembly dependency diagram:
 
 ![codegraph](images/codegraph.png)
+
+Whereas if you want to see the public types organized by namespace do this:
+
+```
+CodeGraph.exe -n -t -p -i  CodeGraph.exe test.dgml
+```
+
+![codegraph](images/types.png)
 
