@@ -48,7 +48,7 @@ namespace CodeGraph
             bool assemblyDependencies = false;
             bool namespaceDependencies = false;
             bool typeDependencies = false;
-            bool methodDependencies = false;
+            bool methodCallDependencies = false;
             bool fieldDependencies = false;
             bool privateDependencies = false;
             List<string> assemblies = new List<string>();
@@ -81,7 +81,7 @@ namespace CodeGraph
                             typeDependencies = true;
                             break;
                         case "m":
-                            methodDependencies = true;
+                            methodCallDependencies = true;
                             break;
                         case "f":
                             fieldDependencies = true;
@@ -118,7 +118,7 @@ namespace CodeGraph
                     AssemblyDependencies = assemblyDependencies,
                     NamespaceDependencies = namespaceDependencies,
                     TypeDependencies = typeDependencies,
-                    MethodDependencies = methodDependencies,
+                    MethodCallDependencies = methodCallDependencies,
                     FieldDependencies = fieldDependencies,
                     PrivateDependencies = privateDependencies
                 });
@@ -137,9 +137,9 @@ namespace CodeGraph
             Console.WriteLine("   -a  add assembly dependency graph");
             Console.WriteLine("   -n  add namespace dependency graph");
             Console.WriteLine("   -t  add type dependency graph");
-            Console.WriteLine("   -m  add method level dependencies");
+            Console.WriteLine("   -m  add method call dependencies");
             Console.WriteLine("   -f  field level dependencies");
-            Console.WriteLine("   -p  add private member info");
+            Console.WriteLine("   -p  include dependencies from private members");
         }
     }
 }

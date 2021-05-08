@@ -9,8 +9,8 @@ namespace CodeGraph
 {
     public class AssemblyGraph
     {
-        // TODO: read method bodies to extract 'calls' dependencies.
-        // TODO: add method and field level detail when requested.
+        // TODO: add field level detail when requested.
+        // TODO: add option to show type & method dependencies into external assemblies
 
         public AssemblyGraph(string fileName)
         {
@@ -21,7 +21,7 @@ namespace CodeGraph
         public bool AssemblyDependencies;
         public bool NamespaceDependencies;
         public bool TypeDependencies;
-        public bool MethodDependencies;
+        public bool MethodCallDependencies;
         public bool FieldDependencies;
         public bool PrivateDependencies;
         Graph graph;
@@ -258,6 +258,40 @@ namespace CodeGraph
                     }
                 }
             }
+
+            if (MethodCallDependencies)
+            {
+                GraphNode m1 = this.graph.Nodes.GetOrCreate(method.FullName, method.Name, CodeNodeCategories.Method);
+                this.graph.Links.GetOrCreate(typeNode, m1, null, GraphCommonSchema.Contains);
+                MakeGroup(typeNode);
+
+                var ilreader = method.Body.GetILProcessor();
+                foreach (var i in ilreader.Body.Instructions)
+                {
+                    if (i.OpCode == Mono.Cecil.Cil.OpCodes.Call || i.OpCode == Mono.Cecil.Cil.OpCodes.Callvirt)
+                    {
+                        if (i.Operand is MethodReference mr)
+                        {
+                            MethodDefinition md = mr.Resolve();
+                            if (md != null && md.Module == type.Module)
+                            {
+                                GraphNode t2 = (type == md.DeclaringType) ?  typeNode : GetOrCreateTypeNode(parent, md.DeclaringType);
+                                if (t2 != null)
+                                {
+                                    GraphNode m2 = this.graph.Nodes.GetOrCreate(md.FullName, md.Name, CodeNodeCategories.Method);
+                                    this.graph.Links.GetOrCreate(t2, m2, null, GraphCommonSchema.Contains);
+                                    MakeGroup(t2);
+                                    this.graph.Links.GetOrCreate(m1, m2, null, CodeLinkCategories.Calls);
+                                }
+                            }
+                            else
+                            {
+                                // todo: handle external dependencies
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         private void VisitProperty(GraphNode parent, GraphNode typeNode, TypeDefinition t, PropertyDefinition prop)
@@ -275,7 +309,7 @@ namespace CodeGraph
                 {
                     GetOrCreateTypeReference(typeNode, n2);
                 }
-            else
+                else
                 {
                     // todo: handle external dependencies
                 }

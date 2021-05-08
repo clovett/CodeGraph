@@ -13,9 +13,9 @@ Options:
    -a  add assembly dependency graph
    -n  add namespace dependency graph
    -t  add type dependency graph
-   -m  add method level dependencies
+   -m  add method call dependencies
    -f  field level dependencies
-   -p  add private member info
+   -p  include dependencies from private members
 ```
 
 For example, this command line:
@@ -36,3 +36,11 @@ CodeGraph.exe -n -t -i  CodeGraph.exe test.dgml
 
 ![codegraph](images/types.png)
 
+Now add method call details using `-m` like this:
+
+
+```
+CodeGraph.exe -n -t -m -i  CodeGraph.exe test.dgml
+```
+
+![codegraph](images/calls.png)
